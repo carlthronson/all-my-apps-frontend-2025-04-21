@@ -17,7 +17,6 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log("Authorizing user with credentials:", credentials);
         if (!credentials?.email || !credentials?.password) return null;
 
         const query = `
@@ -48,10 +47,7 @@ export const authOptions: AuthOptions = {
 
           const data = await res.json();
           const user: User = data?.data?.login;
-          console.log("User data from API:", user);
-          const result = user?.id ? user : null;
-          console.log("User authenticated:", result);
-          return result;
+          return user?.id ? user : null;
         } catch (error) {
           console.error("Authentication error:", error);
           return null;
@@ -85,15 +81,12 @@ export const authOptions: AuthOptions = {
   },
   cookies: {
     csrfToken: {
-      name: '__Secure-next-auth.csrf-token', // ◀ CHANGED FROM __Host-
+      name: '__Secure-next-auth.csrf-token',
       options: {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',
         path: '/',
-        domain: process.env.NODE_ENV === 'production'
-          ? '.vercel.app'
-          : undefined
       }
     },
     sessionToken: {
@@ -102,9 +95,6 @@ export const authOptions: AuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production'
-          ? '.vercel.app'
-          : undefined,
         path: '/',
       }
     }
