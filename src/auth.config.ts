@@ -1,4 +1,3 @@
-// src/auth.config.ts
 import type { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -31,24 +30,29 @@ export const authOptions: AuthOptions = {
           }
         `;
 
-        const res = await fetch(`${process.env.API_URL}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query,
-            variables: {
-              email: credentials?.email,
-              password: credentials?.password
-            }
-          })
-        });
+        try {
+          const res = await fetch(`${process.env.API_URL}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query,
+              variables: {
+                email: credentials.email,
+                password: credentials.password
+              }
+            })
+          });
 
-        if (!res.ok) return null;
+          if (!res.ok) return null;
 
-        const data = await res.json();
-        const user: User = data?.data?.login;
+          const data = await res.json();
+          const user: User = data?.data?.login;
 
-        return user?.id ? user : null;
+          return user?.id ? user : null; // Critical: Return null instead of throwing
+        } catch (error) {
+          console.error("Authentication error:", error);
+          return null;
+        }
       },
     }),
   ],
@@ -86,9 +90,21 @@ export const authOptions: AuthOptions = {
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
         domain: process.env.NODE_ENV === 'production'
-          ? '.vercel.app' // For Vercel deployments
-          : undefined, // Localhost
+          ? '.vercel.app' // Critical for Vercel
+          : undefined,
         path: '/',
+      }
+    },
+    csrfToken: {
+      name: '__Host-next-auth.csrf-token',
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        domain: process.env.NODE_ENV === 'production'
+          ? '.vercel.app' // Critical for Vercel
+          : undefined
       }
     }
   },
