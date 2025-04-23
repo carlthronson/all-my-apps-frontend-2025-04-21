@@ -17,6 +17,7 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
+        console.log("Authorizing user with credentials:", credentials);
         if (!credentials?.email || !credentials?.password) return null;
 
         const query = `
@@ -47,7 +48,10 @@ export const authOptions: AuthOptions = {
 
           const data = await res.json();
           const user: User = data?.data?.login;
-          return user?.id ? user : null;
+          console.log("User data from API:", user);
+          const result = user?.id ? user : null;
+          console.log("User authenticated:", result);
+          return result;
         } catch (error) {
           console.error("Authentication error:", error);
           return null;
