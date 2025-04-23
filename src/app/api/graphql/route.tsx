@@ -1,20 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { getToken } from "next-auth/jwt";
 
 export async function POST(request: NextRequest) {
   console.log("POST request to /api/graphql");
-  console.log("Request headers:", request.headers.get("cookie"));
+
   try {
     const body = await request.json();
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
+    const token = await getToken({ req: request });
 
     const response = await fetch(process.env.API_URL as string, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-Api-Key": process.env.API_KEY as string,
-        Authorization: accessToken ? `Bearer ${accessToken}` : "",
+        Authorization: `Bearer ${token?.backendJWT}`,
       },
       body: JSON.stringify(body),
     });
@@ -28,24 +27,6 @@ export async function POST(request: NextRequest) {
     const nextResponse = NextResponse.json(data);
 
     console.log("Response data:", data);
-
-    const authToken = data?.data?.login?.authToken ||
-      data?.data?.VerifyAuthToken.authToken;
-
-    // Handle token from response body instead of headers
-    if (authToken) {
-      console.log("Setting auth token in cookies");
-      const cookieStore = await cookies();
-
-      cookieStore.set("accessToken", authToken, {
-        httpOnly: true,
-        maxAge: 24 * 60 * 60,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
-      });
-    } else {
-      console.log("No auth token found in response");
-    }
 
     return nextResponse;
   } catch (error) {

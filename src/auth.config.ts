@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 interface User {
   id: string;
   email: string;
-  roles: string;
+  roles: string[];
   authToken?: string;
 }
 
@@ -28,7 +28,7 @@ export const authOptions: AuthOptions = {
               authToken
             }
           }
-        `;        
+        `;
         const res = await fetch(`http://localhost:3000/api/graphql`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -43,13 +43,10 @@ export const authOptions: AuthOptions = {
 
         if (!res.ok) return null;
 
-        // console.log("Response from login:", res);
         const data = await res.json();
         console.log("Data from login:", data);
-        // const user: User = await res.json();
         const user: User = data?.data?.login;
 
-        // You can add additional checks here if needed
         if (user?.id) {
           console.log("User authenticated successfully:", user);
           return user;
@@ -63,7 +60,8 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        // token.role = user.roles;
+        token.roles = user.roles;  // Array preserved here
+        token.backendJWT = user.authToken;
       }
       return token;
     },
@@ -71,7 +69,8 @@ export const authOptions: AuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
-        // session.user.role = token.role as string | undefined;
+        session.user.roles = token.roles as string[];  // Fixed array typing
+        session.user.authToken = token.backendJWT as string | undefined;
       }
       return session;
     },
@@ -82,4 +81,3 @@ export const authOptions: AuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
-
