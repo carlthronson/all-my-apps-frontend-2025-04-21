@@ -2,8 +2,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+const getCorsHeaders = (request: NextRequest): Record<string, string> => {
+  const allowedOrigins = [
+    'https://all-my-apps-frontend-2025-04-21.vercel.app',
+    'http://localhost:3000'
+  ];
+
+  const origin = request.headers.get('origin') || '';
+  const finalOrigin = allowedOrigins.includes(origin) ? origin : '';
+
+  return {
+    'Access-Control-Allow-Origin': finalOrigin,
+    'Access-Control-Allow-Credentials': 'true',
+    'Content-Type': 'application/json'
+  };
+};
+
 export async function POST(request: NextRequest) {
   console.log("POST request to /api/graphql");
+  const headers = getCorsHeaders(request);
 
   try {
     const body = await request.json();
@@ -25,16 +42,13 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json();
     console.log("Response data:", data);
-    const nextResponse = NextResponse.json(data);
+    return new NextResponse(JSON.stringify(data), { headers });
 
-    console.log("Response data:", data);
-
-    return nextResponse;
   } catch (error) {
     console.error("Error in GraphQL proxy:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
+    return new NextResponse(
+      JSON.stringify({ error: "Internal Server Error" }),
+      { status: 500, headers }
     );
   }
 }
@@ -49,5 +63,3 @@ export async function OPTIONS() {
     }
   });
 }
-
-// PATCH and GET remain unchanged
