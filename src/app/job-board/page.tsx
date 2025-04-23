@@ -27,8 +27,15 @@ export default function Page() {
     }
   `;
 
+  console.log("query: " + query);
+  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+  : 'http://localhost:3000';
+
+  console.log("baseUrl: " + baseUrl);
+  console.log("process.env.NEXT_PUBLIC_VERCEL_URL: " + process.env.NEXT_PUBLIC_VERCEL_URL);
   useEffect(() => {
-    fetch(`http://localhost:3000/api/graphql`, {
+    fetch(`${baseUrl}/api/graphql`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
