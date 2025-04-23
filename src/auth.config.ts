@@ -47,8 +47,7 @@ export const authOptions: AuthOptions = {
 
           const data = await res.json();
           const user: User = data?.data?.login;
-
-          return user?.id ? user : null; // Critical: Return null instead of throwing
+          return user?.id ? user : null;
         } catch (error) {
           console.error("Authentication error:", error);
           return null;
@@ -78,33 +77,31 @@ export const authOptions: AuthOptions = {
   },
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
   },
   cookies: {
-    sessionToken: {
-      name: process.env.NODE_ENV === 'production'
-        ? '__Secure-next-auth.session-token'
-        : 'next-auth.session-token',
+    csrfToken: {
+      name: '__Secure-next-auth.csrf-token', // ◀ CHANGED FROM __Host-
       options: {
         httpOnly: true,
+        secure: true,
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-        domain: process.env.NODE_ENV === 'production'
-          ? '.vercel.app' // Critical for Vercel
-          : undefined,
         path: '/',
+        domain: process.env.NODE_ENV === 'production'
+          ? '.vercel.app'
+          : undefined
       }
     },
-    csrfToken: {
-      name: '__Host-next-auth.csrf-token',
+    sessionToken: {
+      name: '__Secure-next-auth.session-token',
       options: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        path: '/',
+        secure: process.env.NODE_ENV === 'production',
         domain: process.env.NODE_ENV === 'production'
-          ? '.vercel.app' // Critical for Vercel
-          : undefined
+          ? '.vercel.app'
+          : undefined,
+        path: '/',
       }
     }
   },
