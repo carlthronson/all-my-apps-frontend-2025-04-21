@@ -50,7 +50,7 @@ export default function Page() {
   }, []);
 
   return <div>
-    <Title>After processing {tasks.length} jobs...</Title>
+    <Title>After processing {tasks.length} total jobs...</Title>
     <SubTitle>These jobs remain as possibilities.</SubTitle>
     <SubTitle>This view is in {status === 'authenticated' ? 'LIVE' : 'READONLY'} mode</SubTitle>
     <div>
