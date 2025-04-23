@@ -29,7 +29,7 @@ export const authOptions: AuthOptions = {
             }
           }
         `;
-        const res = await fetch(`http://localhost:3000/api/graphql`, {
+        const res = await fetch(`${process.env.API_URL}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
