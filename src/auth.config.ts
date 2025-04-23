@@ -1,3 +1,4 @@
+// src/auth.config.ts
 import type { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -29,6 +30,7 @@ export const authOptions: AuthOptions = {
             }
           }
         `;
+
         const res = await fetch(`${process.env.API_URL}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -44,14 +46,9 @@ export const authOptions: AuthOptions = {
         if (!res.ok) return null;
 
         const data = await res.json();
-        console.log("Data from login:", data);
         const user: User = data?.data?.login;
 
-        if (user?.id) {
-          console.log("User authenticated successfully:", user);
-          return user;
-        }
-        return null;
+        return user?.id ? user : null;
       },
     }),
   ],
@@ -60,7 +57,7 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.roles = user.roles;  // Array preserved here
+        token.roles = user.roles;
         token.backendJWT = user.authToken;
       }
       return token;
@@ -69,11 +66,31 @@ export const authOptions: AuthOptions = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
-        session.user.roles = token.roles as string[];  // Fixed array typing
+        session.user.roles = token.roles as string[];
         session.user.authToken = token.backendJWT as string | undefined;
       }
       return session;
     },
+  },
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === 'production'
+        ? '__Secure-next-auth.session-token'
+        : 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        domain: process.env.NODE_ENV === 'production'
+          ? '.vercel.app' // For Vercel deployments
+          : undefined, // Localhost
+        path: '/',
+      }
+    }
   },
   pages: {
     signIn: "/login",

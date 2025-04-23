@@ -1,3 +1,4 @@
+// src/app/api/graphql/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
@@ -36,6 +37,16 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    }
+  });
 }
 
 // PATCH and GET remain unchanged
