@@ -1,16 +1,11 @@
 // src/app/page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth.config";
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import AuthButtons from "@components/AuthButtons";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/login");
-  }
 
   console.log("Session on home page:", session);
   return (
