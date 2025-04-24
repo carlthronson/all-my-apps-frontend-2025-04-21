@@ -81,7 +81,7 @@ export const authOptions: AuthOptions = {
   },
   cookies: {
     csrfToken: {
-      name: '__Secure-next-auth.csrf-token',
+      name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.csrf-token' : '__next-auth.csrf-token',
       options: {
         httpOnly: true,
         secure: true,
@@ -90,7 +90,7 @@ export const authOptions: AuthOptions = {
       }
     },
     sessionToken: {
-      name: '__Secure-next-auth.session-token',
+      name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : '__next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
