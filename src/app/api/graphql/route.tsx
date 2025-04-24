@@ -1,6 +1,7 @@
 // src/app/api/graphql/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth.config";
 
 const getCorsHeaders = (request: NextRequest): Record<string, string> => {
   const allowedOrigins = [
@@ -24,14 +25,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const token = await getToken({ req: request });
+    const session = await getServerSession(authOptions);
+    const backendJWT = session?.user?.authToken || null;
 
     const response = await fetch(process.env.API_URL as string, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-Api-Key": process.env.API_KEY as string,
-        Authorization: `Bearer ${token?.backendJWT}`,
+        Authorization: `Bearer ${backendJWT}`,
       },
       body: JSON.stringify(body),
     });
