@@ -328,7 +328,7 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
 export default function ExampleTable() {
   const [transactions, setTransactions] = useState<Transaction[]>(initialPayments); // Use local state
   // const [transactions, setTasks] = useState([]);
-  const [mode, setMode] = useState('READONLY');
+  // const [mode, setMode] = useState('READONLY');
   const [isClient, setIsClient] = useState(false)
 
   const query = `
@@ -371,7 +371,7 @@ export default function ExampleTable() {
       .catch((error) => {
         console.error("Error fetching data from GraphQL response:", error);
       });
-    setMode(status === 'authenticated' ? 'LIVE' : 'READONLY');
+    // setMode(status === 'authenticated' ? 'LIVE' : 'READONLY');
   }, []);
 
   if (!isClient) return null // Server renders nothing
@@ -383,13 +383,13 @@ export default function ExampleTable() {
 
 const validateRequired = (value: string) => !!value.length;
 
-const validateRequiredInt = (value: Number) => !!value;
+const validateRequiredInt = (value: number) => !!value;
 
 function validateTransaction(user: Transaction) {
   return {
     name: !validateRequired(user.name) ? 'Name is Required' : '',
     amount: !validateRequired(user.amount) ? 'Amount is Required' : '',
-    dayOfMonth: !validateRequiredInt(Number(user.dayOfMonth)) ? 'Day of month is Required' : '',
+    dayOfMonth: !validateRequiredInt(parseInt(user?.dayOfMonth?.toString())) ? 'Day of month is Required' : '',
     transactionType: !validateRequired(user.transactionType)
       ? 'Transaction type is Required'
       : '',
