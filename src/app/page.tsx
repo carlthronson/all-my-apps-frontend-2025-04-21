@@ -21,6 +21,11 @@ export default async function Home() {
           Settings
         </Link>
       </div>
+      <div>
+      <Link href="/budget">
+          Budget
+        </Link>
+      </div>
       <AuthButtons></AuthButtons>
     </main>
   );
