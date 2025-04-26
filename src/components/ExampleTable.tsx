@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import {
  MRT_EditActionButtons,
  MaterialReactTable,

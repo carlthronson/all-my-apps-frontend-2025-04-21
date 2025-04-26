@@ -1,12 +1,11 @@
 "use client"
-import { useState } from "react";
+// import { useState } from "react";
 import { useSession } from 'next-auth/react';
 import { useRouter } from "next/navigation";
 import ExampleTable from "@components/ExampleTable";
 
 export default function Budget() {
   const { status } = useSession()
-  const [startingBalance, setStartingBalance] = useState("");
   const router = useRouter();
 
   if (status === "unauthenticated") {
