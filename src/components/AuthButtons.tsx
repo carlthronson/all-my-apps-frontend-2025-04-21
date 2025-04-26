@@ -13,6 +13,11 @@ export default function AuthButtons() {
     );
   }
   
-  return <button onClick={() => signIn()}>Sign In</button>;
+  return (
+    <>
+      <p>Welcome</p>
+      <button onClick={() => signIn()}>Sign In</button>
+    </>
+  );
 }
 

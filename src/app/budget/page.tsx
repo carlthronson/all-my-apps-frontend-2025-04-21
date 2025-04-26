@@ -1,23 +1,20 @@
-"use client"
-// import { useState } from "react";
-import { useSession } from 'next-auth/react';
-import { useRouter } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth.config";
+import { redirect } from "next/navigation";
 import ExampleTable from "@components/ExampleTable";
 
-export default function Budget() {
-  const { status } = useSession()
-  const router = useRouter();
+export default async function Budget() {
+  const session = await getServerSession(authOptions);
 
-  if (status === "unauthenticated") {
-    router.push("/login");
+  if (!session) {
+    redirect("/login");
   }
 
   return (
     <div>
       <h1>Budget</h1>
-      <h2>Transactiona</h2>
-      <ExampleTable></ExampleTable>
+      <h2>Transactions</h2>
+      <ExampleTable />
     </div>
   );
 }
-

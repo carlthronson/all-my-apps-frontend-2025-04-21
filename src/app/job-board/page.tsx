@@ -29,12 +29,7 @@ export default function Page() {
   `;
 
   console.log("query: " + query);
-  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : 'http://localhost:3000';
 
-  console.log("baseUrl: " + baseUrl);
-  console.log("process.env.NEXT_PUBLIC_VERCEL_URL: " + process.env.NEXT_PUBLIC_VERCEL_URL);
   useEffect(() => {
     fetch(`/api/graphql`, {
       method: "POST",

@@ -23,7 +23,7 @@ export default async function Home() {
       </div>
       <div>
       <Link href="/budget">
-          Budget
+          Manage Monthly Bills and Deposits
         </Link>
       </div>
       <AuthButtons></AuthButtons>
