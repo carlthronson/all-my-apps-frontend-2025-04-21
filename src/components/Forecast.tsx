@@ -13,7 +13,7 @@ export default function Forecast() {
   const [isClient, setIsClient] = useState(false)
   const [startingBalance, setStartingBalance] = useState(10000);
   const [cash, setCash] = useState(100);
-  const [endingDate, setEndingDate] = useState("");
+  // const [endingDate, setEndingDate] = useState("");
   const [firstNegativeBalance, setFirstNegativeBalance] = useState("");
   const [maxDebt, setMaxDebt] = useState(0);
   const [dailyBalances, setDailyBalances] = useState<DailyBalance[]>([]);
@@ -79,7 +79,6 @@ export default function Forecast() {
 
   return (
     <>
-    {/* <h1>Forecast</h1> */}
     // input fields for starting balance and cash
     <input
       type="number"
