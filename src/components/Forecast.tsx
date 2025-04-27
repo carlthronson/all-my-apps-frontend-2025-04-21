@@ -64,7 +64,7 @@ export default function Forecast() {
         }
         setStartingBalance(json?.data?.getForecast?.startingBalance);
         setCash(json?.data?.getForecast?.cash);
-        setEndingDate(json?.data?.getForecast?.endingDate);
+        // setEndingDate(json?.data?.getForecast?.endingDate);
         setFirstNegativeBalance(json?.data?.getForecast?.firstNegativeBalance);
         setMaxDebt(json?.data?.getForecast?.maxDebt);
         setDailyBalances(json?.data?.getForecast?.dailyBalances);
@@ -79,7 +79,6 @@ export default function Forecast() {
 
   return (
     <>
-    // input fields for starting balance and cash
     <input
       type="number"
       value={startingBalance}
@@ -116,7 +115,6 @@ export default function Forecast() {
           }
           setStartingBalance(json?.data?.getForecast?.startingBalance);
           setCash(json?.data?.getForecast?.cash);
-          setEndingDate(json?.data?.getForecast?.endingDate);
           setFirstNegativeBalance(json?.data?.getForecast?.firstNegativeBalance);
           setMaxDebt(json?.data?.getForecast?.maxDebt);
           setDailyBalances(json?.data?.getForecast?.dailyBalances);
