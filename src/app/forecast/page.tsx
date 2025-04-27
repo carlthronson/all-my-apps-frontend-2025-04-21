@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth.config";
 import { redirect } from "next/navigation";
-import ExampleTable from "@components/ExampleTable";
+import Forecast from "@components/Forecast";
 
-export default async function BudgetPage() {
+export default async function ForecastPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -13,8 +13,8 @@ export default async function BudgetPage() {
   return (
     <div>
       <h1>Budget</h1>
-      <h2>Transactions</h2>
-      <ExampleTable />
+      <h2>Forecast</h2>
+      <Forecast />
     </div>
   );
 }

@@ -26,6 +26,11 @@ export default async function Home() {
           Manage Monthly Bills and Deposits
         </Link>
       </div>
+      <div>
+      <Link href="/forecast">
+          Budget Forecast
+        </Link>
+      </div>
       <AuthButtons></AuthButtons>
     </main>
   );

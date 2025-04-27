@@ -13,7 +13,7 @@ const SubTitle = styled.h2`
     text-align: center;
 `   ;
 
-export default function Page() {
+export default function JobBoardPage() {
   const { status } = useSession()
   const [tasks, setTasks] = useState([]);
   const [mode, setMode] = useState('READONLY');
