@@ -128,9 +128,9 @@ export default function Forecast() {
     }
     }>Get Forecast</button>
 
-    {/* <h2>Starting Balance: {startingBalance}</h2>
-    <h2>Cash: {cash}</h2> */}
-    {/* <h2>Ending Date: {endingDate}</h2> */}
+    <h2>Starting Balance: {startingBalance}</h2>
+    <h2>Cash: {cash}</h2>
+    <h2>First Negative Balance: {new Date(endingDate).toLocaleDateString()}</h2>
     <h2>First Negative Balance: {new Date(firstNegativeBalance).toLocaleDateString()}</h2>
     <h2>Max Debt: {maxDebt}</h2>
     {/* {dailyBalances.map((balance, index) => (
