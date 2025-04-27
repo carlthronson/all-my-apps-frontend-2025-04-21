@@ -79,7 +79,7 @@ export default function Forecast() {
 
   return (
     <>
-    <h1>Forecast</h1>
+    {/* <h1>Forecast</h1> */}
     // input fields for starting balance and cash
     <input
       type="number"
@@ -128,17 +128,20 @@ export default function Forecast() {
     }
     }>Get Forecast</button>
 
-    <h2>Starting Balance: {startingBalance}</h2>
+    {/* <h2>Starting Balance: {startingBalance}</h2>
     <h2>Cash: {cash}</h2>
-    <h2>First Negative Balance: {new Date(endingDate).toLocaleDateString()}</h2>
-    <h2>First Negative Balance: {new Date(firstNegativeBalance).toLocaleDateString()}</h2>
-    <h2>Max Debt: {maxDebt}</h2>
-    {/* {dailyBalances.map((balance, index) => (
+    <h2>Ending Date: {new Date(endingDate).toLocaleDateString()}</h2> */}
+    <h3>First Negative Balance: {new Date(firstNegativeBalance).toLocaleDateString()}</h3>
+    <h3>Max Debt: {maxDebt}</h3>
+    <h3>Daily Balances:</h3>
+    {dailyBalances.map((balance, index) => (
       <div key={index}>
-        <h2>Date: {balance.date}</h2>
-        <h2>Ending Balance: {balance.endingBalance}</h2>
+        <ul>
+        <li>Date: {new Date(balance.date).toLocaleDateString()}</li>
+        <li>Ending Balance: {balance.endingBalance}</li>
+        </ul>
       </div>
-    ))} */}
+    ))}
     </>
   );
 }
