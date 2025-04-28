@@ -143,6 +143,7 @@ export default function Forecast() {
     <h3>Max Debt: {maxDebt}</h3>
     <h3>Daily Balances:</h3>
     {dailyBalances.map((balance, index) => (
+      balance.transactions.length <= 1 ? null :
       <div key={index} style={{background: Number(balance.endingBalance) < 0.0 ? 'red' : (Number(balance.endingBalance) < Number(balance.startingBalance) ? 'orange' : 'lightgreen') }}>
         <ul>
         <li>Date: {new Date(balance.date).toLocaleDateString()}</li>
