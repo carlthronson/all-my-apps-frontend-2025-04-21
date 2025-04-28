@@ -4,6 +4,11 @@ import { useState, useEffect } from "react";
 
 type DailyBalance = {
   date: string;
+  startingBalance: number;
+  transactions: {
+    name: string;
+    amount: number;
+  }[];
   endingBalance: number;
 };
 
@@ -31,6 +36,12 @@ export default function Forecast() {
         maxDebt
         dailyBalances {
           date
+          startingBalance
+          transactions {
+            id
+            name
+            amount
+          }
           endingBalance
         }
       }  
@@ -134,8 +145,15 @@ export default function Forecast() {
     {dailyBalances.map((balance, index) => (
       <div key={index}>
         <ul>
-        <li>Date: {new Date(balance.date).toLocaleDateString()}</li>
+        <li style={{background: balance.endingBalance < 0 ? 'red' : balance.endingBalance < balance.startingBalance ? 'orange' : 'lightgreen' }}>Date: {new Date(balance.date).toLocaleDateString()}</li>
+        <li>Starting Balance: {balance.startingBalance}</li>
         <li>Ending Balance: {balance.endingBalance}</li>
+        <br></br>
+        {balance.transactions.map((transaction, index) => (
+          <li key={index}>
+            {transaction.amount} - {transaction.name}
+          </li>
+        ))}
         </ul>
       </div>
     ))}
