@@ -20,17 +20,26 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+// Transaction type: startDate and endDate are strings in YYYY-MM-DD format
 type Transaction = {
   id: string;
   name: string;
   amount: string;
   dayOfMonth: string;
   transactionType: string;
+  startDate?: string; // YYYY-MM-DD
+  endDate?: string;   // YYYY-MM-DD
 };
 
 const initialPayments: Transaction[] = [];
 
-const Example = ({ transactions, setTransactions }: { transactions: Transaction[]; setTransactions: (transactions: Transaction[]) => void }) => {
+const Example = ({
+  transactions,
+  setTransactions,
+}: {
+  transactions: Transaction[];
+  setTransactions: (transactions: Transaction[]) => void;
+}) => {
   const [validationErrors, setValidationErrors] = useState<
     Record<string, string | undefined>
   >({});
@@ -100,6 +109,40 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
             }),
         },
       },
+      // --- startDate column ---
+      {
+        accessorKey: 'startDate',
+        header: 'Start Date',
+        Cell: ({ cell }) => cell.getValue<string>() || '',
+        muiEditTextFieldProps: {
+          required: false,
+          type: 'date',
+          error: !!validationErrors?.startDate,
+          helperText: validationErrors?.startDate,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              startDate: undefined,
+            }),
+        },
+      },
+      // --- endDate column ---
+      {
+        accessorKey: 'endDate',
+        header: 'End Date',
+        Cell: ({ cell }) => cell.getValue<string>() || '',
+        muiEditTextFieldProps: {
+          required: false,
+          type: 'date',
+          error: !!validationErrors?.endDate,
+          helperText: validationErrors?.endDate,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              endDate: undefined,
+            }),
+        },
+      },
     ],
     [validationErrors],
   );
@@ -113,17 +156,27 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
       }
       setValidationErrors({});
 
-      const newTransaction = {
-        ...values,
-        // id: (Math.random() + 1).toString(36).substring(7),
-      };
+      const newTransaction = { ...values };
 
       const query = `
-        mutation createTransaction($name: String!, $amount: String!, $dayOfMonth: Int!, $transactionType: String!) {
-          createTransaction(name: $name, amount: $amount, dayOfMonth: $dayOfMonth, transactionType: $transactionType)
+        mutation createTransaction(
+          $name: String!,
+          $amount: String!,
+          $dayOfMonth: Int!,
+          $transactionType: String!,
+          $startDate: Date,
+          $endDate: Date
+        ) {
+          createTransaction(
+            name: $name,
+            amount: $amount,
+            dayOfMonth: $dayOfMonth,
+            transactionType: $transactionType,
+            startDate: $startDate,
+            endDate: $endDate
+          )
         }
       `;
-      console.log("query: " + query);
 
       fetch(`/api/graphql`, {
         method: "POST",
@@ -135,24 +188,19 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
             amount: newTransaction.amount,
             dayOfMonth: Number(newTransaction.dayOfMonth),
             transactionType: newTransaction.transactionType,
+            startDate: newTransaction.startDate || null,
+            endDate: newTransaction.endDate || null,
           }
         })
       })
-        .then((response) => {
-          const json = response.json();
-          console.log("Response from GraphQL:", json);
-          return json;
-        })
+        .then((response) => response.json())
         .then((json) => {
           if (json?.errors) {
             console.error("GraphQL errors:", json.errors);
             return;
           }
-          console.log("json: " + JSON.stringify(json));
           newTransaction.id = json?.data?.createTransaction;
-          // console.log("transactions: " + JSON.stringify(json.data.getTransactions));
           setTransactions([...transactions, newTransaction]);
-
         })
         .catch((error) => {
           console.error("Error fetching data from GraphQL response:", error);
@@ -171,11 +219,26 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
       setValidationErrors({});
 
       const query = `
-        mutation updateTransaction($id: ID!, $name: String!, $amount: String!, $dayOfMonth: Int!, $transactionType: String!) {
-          updateTransaction(id: $id, name: $name, amount: $amount, dayOfMonth: $dayOfMonth, transactionType: $transactionType)
+        mutation updateTransaction(
+          $id: ID!,
+          $name: String!,
+          $amount: String!,
+          $dayOfMonth: Int!,
+          $transactionType: String!,
+          $startDate: Date,
+          $endDate: Date
+        ) {
+          updateTransaction(
+            id: $id,
+            name: $name,
+            amount: $amount,
+            dayOfMonth: $dayOfMonth,
+            transactionType: $transactionType,
+            startDate: $startDate,
+            endDate: $endDate
+          )
         }
       `;
-      console.log("query: " + query);
       fetch(`/api/graphql`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -187,21 +250,17 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
             amount: values.amount,
             dayOfMonth: Number(values.dayOfMonth),
             transactionType: values.transactionType,
+            startDate: values.startDate || null,
+            endDate: values.endDate || null,
           }
         })
       })
-        .then((response) => {
-          const json = response.json();
-          console.log("Response from GraphQL:", json);
-          return json;
-        })
+        .then((response) => response.json())
         .then((json) => {
           if (json?.errors) {
             console.error("GraphQL errors:", json.errors);
             return;
           }
-          console.log("json: " + JSON.stringify(json));
-          // Update the transaction in the local state
           setTransactions(
             transactions.map((transaction) =>
               transaction.id === values.id ? values : transaction
@@ -221,8 +280,6 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
           deleteTransaction(id: $id)
         }
       `;
-      console.log("query: " + query);
-
       fetch(`/api/graphql`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -233,11 +290,7 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
           }
         })
       })
-        .then((response) => {
-          const json = response.json();
-          console.log("Response from GraphQL:", json);
-          return json;
-        })
+        .then((response) => response.json())
         .then((json) => {
           if (json?.errors) {
             console.error("GraphQL errors:", json.errors);
@@ -246,7 +299,6 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
           setTransactions(
             transactions.filter((transaction) => transaction.id !== row.original.id)
           );
-          // console.log("transactions: " + JSON.stringify(json.data.getTransactions));
         })
         .catch((error) => {
           console.error("Error fetching data from GraphQL response:", error);
@@ -326,55 +378,47 @@ const Example = ({ transactions, setTransactions }: { transactions: Transaction[
 };
 
 export default function ExampleTable() {
-  const [transactions, setTransactions] = useState<Transaction[]>(initialPayments); // Use local state
-  // const [transactions, setTasks] = useState([]);
-  // const [mode, setMode] = useState('READONLY');
-  const [isClient, setIsClient] = useState(false)
+  const [transactions, setTransactions] = useState<Transaction[]>(initialPayments);
+  const [isClient, setIsClient] = useState(false);
 
   const query = `
     query getTransactions {
-        getTransactions {
-          id
-          name
-          amount
-          dayOfMonth
-          transactionType
-        }
+      getTransactions {
+        id
+        name
+        amount
+        dayOfMonth
+        transactionType
+        startDate
+        endDate
       }
-    `;
-  console.log("query: " + query);
+    }
+  `;
 
   useEffect(() => {
-    setIsClient(true) // Only runs on client
+    setIsClient(true);
     fetch(`/api/graphql`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         query,
-        variables: {
-        }
-      })
+        variables: {},
+      }),
     })
-      .then((response) => {
-        const json = response.json();
-        console.log("Response from GraphQL:", json);
-        return json;
-      })
+      .then((response) => response.json())
       .then((json) => {
         if (json?.errors) {
           console.error("GraphQL errors:", json.errors);
           return;
         }
         setTransactions(json?.data?.getTransactions);
-        console.log("transactions: " + JSON.stringify(json.data.getTransactions));
       })
       .catch((error) => {
         console.error("Error fetching data from GraphQL response:", error);
       });
-    // setMode(status === 'authenticated' ? 'LIVE' : 'READONLY');
   }, []);
 
-  if (!isClient) return null // Server renders nothing
+  if (!isClient) return null;
 
   return (
     <Example transactions={transactions} setTransactions={setTransactions} />
@@ -382,16 +426,20 @@ export default function ExampleTable() {
 }
 
 const validateRequired = (value: string) => !!value.length;
-
 const validateRequiredInt = (value: number) => !!value;
 
 function validateTransaction(user: Transaction) {
   return {
     name: !validateRequired(user.name) ? 'Name is Required' : '',
     amount: !validateRequired(user.amount) ? 'Amount is Required' : '',
-    dayOfMonth: !validateRequiredInt(parseInt(user?.dayOfMonth?.toString())) ? 'Day of month is Required' : '',
+    dayOfMonth: !validateRequiredInt(parseInt(user?.dayOfMonth?.toString()))
+      ? 'Day of month is Required'
+      : '',
     transactionType: !validateRequired(user.transactionType)
       ? 'Transaction type is Required'
       : '',
+    // Optionally require startDate/endDate:
+    // startDate: !validateRequired(user.startDate ?? '') ? 'Start date is Required' : '',
+    // endDate: !validateRequired(user.endDate ?? '') ? 'End date is Required' : '',
   };
 }
