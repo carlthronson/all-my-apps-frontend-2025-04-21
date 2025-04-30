@@ -1,43 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import './style.css';
-import { useCollapse } from 'react-collapsed';
+// components/DailyActivity.tsx
+"use client";
+import { useState } from 'react';
+import TransactionModal from './TransactionModal';
+import Link from "next/link";
 
 export default function DailyActivity({ activity, index }) {
-  const { getCollapseProps, getToggleProps, isExpanded } = useCollapse()
-  let bgcolor = Number(activity.endingBalance) < 0.0 ? 'red' : (Number(activity.endingBalance) < Number(activity.startingBalance) ? 'orange' : 'lightgreen');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const bgcolor = Number(activity.endingBalance) < 0 
+    ? 'red' 
+    : Number(activity.endingBalance) < Number(activity.startingBalance) 
+      ? 'orange' 
+      : 'lightgreen';
 
   return (
     <div>
-      <div key={index} style={{ background: bgcolor }}>
-        <ul>
-          <li>Date: {activity.date}</li>
-          <li>Starting Balance: {activity.startingBalance}</li>
-          <li>Ending Balance: {activity.endingBalance}</li>
-          <br></br>
-          {/* Changed from Link to button */}
-          <button
-            style={{
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              color: 'blue',
-              textDecoration: 'underline',
-              cursor: 'pointer',
-              font: 'inherit'
-            }}
-            {...getToggleProps()}
-          >
-            {isExpanded ? 'Collapse' : 'Transactions'}
-          </button>
-          <section {...getCollapseProps()}>
-            {activity.transactions.map((transaction, index) => (
-              <li key={index}>
-                {transaction.amount} - {transaction.name} - {transaction.dayOfMonth}
-              </li>
-            ))}
-          </section>
-        </ul>
+      <div key={index} style={{ background: bgcolor }} className="p-3 rounded">
+        <div className="grid grid-cols-2 gap-2 mb-2">
+          <div>Start: {activity.startingBalance}</div>
+          <div>End: {activity.endingBalance}</div>
+        </div>
+        
+        <Link href=''
+          onClick={() => setIsModalOpen(true)}
+          className="text-blue-600 hover:text-blue-800 underline cursor-pointer"
+        >
+          {activity.transactions.length} Transactions
+        </Link>
+
+        <TransactionModal
+          transactions={activity.transactions}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
-  )
+  );
 }

@@ -11,7 +11,7 @@ const getWeek = function (someDay) {
     return week;
 }
 
-export default function Month({ someMoment, today, index }) {
+export default function Month({ someMoment, today }) {
 
     let firstDay = someMoment.clone().startOf('month');
     let weeks = [];
