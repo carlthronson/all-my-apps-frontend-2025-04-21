@@ -34,13 +34,13 @@ export default function Day({ day, index }) {
         <div
             className='day'
             style={{
-                backgroundColor: todaysActivity?.transactions.length > 1
+                backgroundColor: todaysActivity?.transactions.length > 0
                     ? bgcolor
                     : undefined
             }}
         >            <div className='date'>{day.date() == 1 ? day.format('MMM D') : day.format('D')}</div>
             {
-                todaysActivity?.transactions.length > 1 && (
+                todaysActivity?.transactions.length > 0 && (
                     <DailyActivity
                         activity={todaysActivity}
                         key={`${index}-${todaysActivity.date}`}
