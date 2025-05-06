@@ -18,6 +18,10 @@ export default function JobBoardPage() {
   const [tasks, setTasks] = useState([]);
   const [mode, setMode] = useState('READONLY');
 
+  useEffect(() => {
+    setMode(status === 'authenticated' ? 'LIVE' : 'READONLY');
+  }, [status]);
+
   const query = `
   query getJobSearchTasks {
       getJobSearchTasks {
@@ -56,10 +60,7 @@ export default function JobBoardPage() {
       .catch((error) => {
         console.error("Error fetching data from GraphQL response:", error);
       });
-      setMode(status === 'authenticated' ? 'LIVE' : 'READONLY');
   }, []);
-
-  const isDisabled = (mode == 'LIVE') ? false : true;
 
   return <div>
     <Title>After processing {tasks.length} total jobs...</Title>
@@ -67,7 +68,7 @@ export default function JobBoardPage() {
     <SubTitle>This view is in {mode} mode</SubTitle>
     <div>
       {/* Coming soon... */}
-      <StoryBoard isDisabled={isDisabled}></StoryBoard>
+      <StoryBoard isDisabled={(mode == 'LIVE') ? false : true}></StoryBoard>
     </div>
   </div>
 }

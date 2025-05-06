@@ -32,7 +32,31 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
   };
 
   return (
-    <>
+    <div className='calendar'>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: '75%' }}>
+        Starting Balance:
+        <input
+          type="number"
+          value={startingBalance}
+          onChange={(e) => setStartingBalance(Number(e.target.value))}
+        />
+        Daily Cash Flow:
+        <input
+          type="number"
+          value={cash}
+          onChange={(e) => setCash(Number(e.target.value))}
+        />
+        End of runway:
+        <input
+          type="date"
+          value={firstNegativeBalance}
+          readOnly={true}
+        />
+      </div>
+      <div className='calendar-container' style={{ width: '95%' }}>
+        <Header someMoment={someDay} prev={prev} next={next} />
+        <Month someMoment={someDay} today={moment()} />
+      </div>
       <div>
         <input
           type="number"
@@ -46,11 +70,7 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
         />
       </div>
       <span>{firstNegativeBalance}</span>
-      <div className='calendar-container'>
-        <Header someMoment={someDay} prev={prev} next={next} />
-        <Month someMoment={someDay} today={moment()} />
-      </div>
-    </>
+    </div>
   );
 }
 

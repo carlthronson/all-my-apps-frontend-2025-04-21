@@ -31,8 +31,8 @@ export default function Story({ story, statuses, index, total, isDisabled }) {
         justifyContent: 'space-between',
         gap: 8
       }}>
-      <span href='' style={{  }}>{index + 1}/{total} ({story.jobs.length}) {story.label} - {story.location}</span>
-      <Link href='' style={{  }} {...getToggleProps()}>{isExpanded ? 'Collapse' : 'Expand'}</Link>
+      <span style={{  }}>{index + 1}/{total} ({story.jobs.length}) {story.label} - {story.location}</span>
+      <div style={{ color: '-webkit-link', cursor: 'pointer', textDecoration: 'underline' }} {...getToggleProps()}>{isExpanded ? 'Collapse' : 'Expand'}</div>
       </div>
       <section {...getCollapseProps()}>
         {story.jobs.map((item, index) => (
