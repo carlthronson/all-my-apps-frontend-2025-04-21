@@ -57,19 +57,6 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
         <Header someMoment={someDay} prev={prev} next={next} />
         <Month someMoment={someDay} today={moment()} />
       </div>
-      <div>
-        <input
-          type="number"
-          value={startingBalance}
-          onChange={(e) => setStartingBalance(Number(e.target.value))}
-        />
-        <input
-          type="number"
-          value={cash}
-          onChange={(e) => setCash(Number(e.target.value))}
-        />
-      </div>
-      <span>{firstNegativeBalance}</span>
     </div>
   );
 }
