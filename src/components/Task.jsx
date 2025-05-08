@@ -3,11 +3,14 @@ import styled from 'styled-components';
 import { Avatar, Col, Image } from 'antd';
 import Link from 'antd/es/typography/Link';
 import Select from 'react-select'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useCollapse } from 'react-collapsed'
 // import { stat } from 'fs';
 import moment from 'moment';
-import { useSession } from 'next-auth/react';
+import dynamic from 'next/dynamic';
+import { useJobSearch } from '@/contexts/JobSearchContext';
+
+const DynamicSelect = dynamic(() => import('react-select').then(mod => mod.default), { ssr: false });
 
 const customStyles = {
   container: (provided) => ({
@@ -92,14 +95,17 @@ function bgcolorChange(props) {
   return 'lightgreen';
 }
 
-export default function Task({ job, story, statuses, index, isDisabled }) {
+export default function Task({ job, story, index }) {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse()
+  const { statuses, updateJobStatus, isDisabled } = useJobSearch();
+
+  // console.log("isDisabled: " + isDisabled);
 
   const handleChange = (selectedOption) => {
     console.log('selected choice: ' + JSON.stringify(selectedOption));
     job.task.status.name = selectedOption.value;
     job.task['story'] = { id: story.id };
-    let payload = JSON.stringify({id: job.task.id, status: job.task.status.name});
+    let payload = JSON.stringify({ id: job.task.id, status: job.task.status.name });
     console.log("payload for posting to task api: " + payload);
     fetch('/api/rest/task', {
       method: "POST",
@@ -112,11 +118,35 @@ export default function Task({ job, story, statuses, index, isDisabled }) {
     })
       .then(response => response.json())
       .then(data => {
+        console.log("response from task api: " + JSON.stringify(data));
+        // Update the job status in the context
+        updateJobStatus(job.id, data.status);
       })
       .catch(error => console.error(error));
   }
 
   // console.log("Story: " + JSON.stringify(story));
+
+  // Build options once (memoized)
+  const options = useMemo(() =>
+    statuses
+      .filter(item => item.name !== 'invalid')
+      .map(item => ({
+        value: item.name,
+        label: item.label,
+      })), [statuses]);
+
+  // Find the initial value in options
+  const initialValue = useMemo(() =>
+    options.find(opt => opt.value === job.task.status.name), [options, job.task.status.name]);
+
+  // Controlled state for the select value
+  const [selectedOption, setSelectedOption] = useState(initialValue);
+
+  // If job/task/status changes, update the selected option
+  useEffect(() => {
+    setSelectedOption(options.find(opt => opt.value === job.task.status.name));
+  }, [job.task.status.name, options]);
 
   return (
     <TaskArea>
@@ -125,29 +155,25 @@ export default function Task({ job, story, statuses, index, isDisabled }) {
         justifyContent: 'space-between',
         gap: 8
       }}>
-        <Link style={{  }} href={job.linkedinurl} target='_blank'>{job.name}</Link>
+        <Link style={{}} href={job.linkedinurl} target='_blank'>{job.name}</Link>
         {/* <p style={{float: 'right'}}>Right-aligned text</p> */}
         <Link style={{ flexShrink: 0 }} {...getToggleProps()}>{isExpanded ? 'Collapse' : 'Expand'}</Link>
       </div>
       <div style={{ display: 'flex' }} {...getCollapseProps()}>
         <div style={{ padding: '3px' }}>Status:
-          <Select
+          <DynamicSelect
+            instanceId={`status-select-${job.id}`}  // Use a unique, stable value for each select
             styles={customStyles}
             className="basic-single"
             classNamePrefix="select"
-            defaultValue={{ value: job.task.status.name, label: job.task.status.label }}
+            value={selectedOption}
             isDisabled={isDisabled}
             isLoading={false}
             isClearable={false}
             isRtl={false}
             isSearchable={false}
             name="Status"
-            options=
-            {statuses
-              .filter((item) => item.name != 'invalid')
-              .map((item, index) => (
-                { index: index, value: item.name, label: item.label }
-              ))}
+            options={options}
             onChange={handleChange}
           />
         </div>

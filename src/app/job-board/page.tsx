@@ -1,75 +1,98 @@
 // `app/job-board/page.tsx` is the UI for the `/job-board/` URL
-'use client'
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { useSession } from 'next-auth/react';
+// import styled from 'styled-components';
 import StoryBoard from '@/components/StoryBoard';
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth.config";
+import { fetchGraphQL } from '@/utils/fetchGraphQL';
+import { JobSearchProvider } from '@/contexts/JobSearchContext';
 
-const Title = styled.h1`
-    text-align: center;
-`   ;
+// const Title = styled.h1`
+//     text-align: center;
+// `   ;
 
-const SubTitle = styled.h2`
-    text-align: center;
-`   ;
+// const SubTitle = styled.h2`
+//     text-align: center;
+// `   ;
 
-export default function JobBoardPage() {
-  const { status } = useSession()
-  const [tasks, setTasks] = useState([]);
-  const [mode, setMode] = useState('READONLY');
+export default async function JobBoardPage() {
+  const session = await getServerSession(authOptions);
 
-  useEffect(() => {
-    setMode(status === 'authenticated' ? 'LIVE' : 'READONLY');
-  }, [status]);
+  const GET_TASKS = `query getJobSearchTasks {getJobSearchTasks { id, name, label}}`;
+  const taskData = await fetchGraphQL({ query: GET_TASKS, variables: {} });
+  const tasks = taskData?.getJobSearchTasks;
+  // console.log("tasks: " + JSON.stringify(tasks));
 
-  const query = `
-  query getJobSearchTasks {
-      getJobSearchTasks {
+  const GET_PHASES = `query getJobSearchPhases {getJobSearchPhases { id, name, label}}`;
+  const phaseData = await fetchGraphQL({ query: GET_PHASES, variables: {} });
+  const phases = phaseData?.getJobSearchPhases;
+  // console.log("phases: " + JSON.stringify(phases));
+
+  const GET_STATUSES = `query getJobSearchStatuses {getJobSearchStatuses { id, name, label}}`;
+  const statusData = await fetchGraphQL({ query: GET_STATUSES, variables: {} });
+  const statuses = statusData?.getJobSearchStatuses;
+  // console.log("statuses: " + JSON.stringify(statuses));
+
+  const GET_JOBS = `query GET_JOBS
+{
+  getJobSearchJobListings(
+    pageNumber: 0
+    pageSize: 100
+    sortDirection: "DESC"
+    sortProperties: ["publishedAt"]
+  ) {
+    id
+    name
+    label
+    companyName
+    company {
+      id
+      name
+      label
+      location
+    }
+    location
+    linkedinid
+    linkedinurl
+    contracttype
+    experiencelevel
+    salary
+    sector
+    worktype
+    publishedAt
+    task {
+      id
+      name
+      label
+      status {
         id
         name
         label
-      }
+        phase {
+          id
+          name
+          label
+        }
+      } 
     }
-  `;
+  }
+}
+`;
+  const jobData = await fetchGraphQL({ query: GET_JOBS, variables: {} });
+  const jobs = jobData?.getJobSearchJobListings;
+  // console.log("stories: " + JSON.stringify(stories));
 
-  console.log("query: " + query);
-
-  useEffect(() => {
-    fetch(`/api/graphql`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query,
-        variables: {
-        }
-      })
-    })
-      .then((response) => {
-        const json = response.json();
-        console.log("Response from GraphQL:", json);
-        return json;
-      })
-      .then((json) => {
-        if (json?.errors) {
-          console.error("GraphQL errors:", json.errors);
-          return;
-        }
-        setTasks(json?.data?.getJobSearchTasks);
-        console.log("phases: " + JSON.stringify(json.data.getJobSearchTasks));
-      })
-      .catch((error) => {
-        console.error("Error fetching data from GraphQL response:", error);
-      });
-  }, []);
+  const mode = session ? 'LIVE' : 'READONLY';
 
   return <div>
-    <Title>After processing {tasks.length} total jobs...</Title>
-    <SubTitle>These jobs remain as possibilities.</SubTitle>
-    <SubTitle>This view is in {mode} mode</SubTitle>
+    <h1>After processing {tasks.length} total jobs...</h1>
+    <h2>These jobs remain as possibilities.</h2>
+    <h2>This view is in {mode} mode</h2>
     <div>
       {/* Coming soon... */}
-      <StoryBoard isDisabled={(mode == 'LIVE') ? false : true}></StoryBoard>
+      <JobSearchProvider initialData={{ phases, statuses, jobListings: jobs, isDisabled: mode === 'READONLY' }}>
+        <StoryBoard />
+      </JobSearchProvider>
     </div>
-  </div>
+  </div >
 }
 

@@ -19,6 +19,7 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "@hooks/*": ["./src/hooks/*"],
+      "@types/*": ["./src/types/*"],
       "@/*": ["./src/*"], // New catch-all alias
       "next-auth": ["node_modules/next-auth"],
       "next-auth/react": ["node_modules/next-auth/react"]

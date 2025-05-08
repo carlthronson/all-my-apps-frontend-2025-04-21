@@ -1,7 +1,7 @@
 import { useCollapse } from 'react-collapsed';
 import styled from 'styled-components';
 import { Avatar, Image } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Task from './Task';
 
@@ -21,8 +21,13 @@ const StoryArea = styled.div`
     flex-direction: column;
 `   ;
 
-export default function Story({ story, statuses, index, total, isDisabled }) {
+export default function Story({ phase, story, index, total }) {
   const { getCollapseProps, getToggleProps, isExpanded } = useCollapse()
+
+  const filteredJobs = story.jobs.filter(job =>
+    // For each job, check if the task's status's phase matches the current phase
+    job?.task?.status?.phase?.name === phase?.name
+  );
 
   return (
     <StoryArea>
@@ -31,12 +36,12 @@ export default function Story({ story, statuses, index, total, isDisabled }) {
         justifyContent: 'space-between',
         gap: 8
       }}>
-      <span style={{  }}>{index + 1}/{total} ({story.jobs.length}) {story.label} - {story.location}</span>
-      <div style={{ color: '-webkit-link', cursor: 'pointer', textDecoration: 'underline' }} {...getToggleProps()}>{isExpanded ? 'Collapse' : 'Expand'}</div>
+        <span style={{}}>{index + 1}/{total} ({filteredJobs.length}) {story.label} - {story.location}</span>
+        <div style={{ color: '-webkit-link', cursor: 'pointer', textDecoration: 'underline' }} {...getToggleProps()}>{isExpanded ? 'Collapse' : 'Expand'}</div>
       </div>
       <section {...getCollapseProps()}>
-        {story.jobs.map((item, index) => (
-            <Task key={index} job={item} story={story} statuses={statuses} index={index} isDisabled={isDisabled}/>
+        {filteredJobs.map((item, index) => (
+          <Task key={index} job={item} story={story} index={index} />
         ))}
       </section>
     </StoryArea>
