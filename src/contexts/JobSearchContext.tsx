@@ -1,6 +1,6 @@
 // contexts/JobSearchContext.tsx
 "use client"
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
 import { JobSearchPhase, JobSearchStatus, JobSearchJobListing } from '@/types/jobSearchTypes';
 
 type JobSearchContextType = {
@@ -13,11 +13,17 @@ type JobSearchContextType = {
 
 const JobSearchContext = createContext<JobSearchContextType | null>(null);
 
-export function JobSearchProvider({ initialData, children }: { initialData: any; children: React.ReactNode }) {
-    const [phases, setPhases] = useState<JobSearchPhase[]>(initialData.phases);
-    const [statuses, setStatuses] = useState<JobSearchStatus[]>(initialData.statuses);
+export function JobSearchProvider({
+    initialData,
+    children,
+}: {
+    initialData: Omit<JobSearchContextType, 'updateJobStatus'>;
+    children: React.ReactNode;
+}) {
+    const [phases] = useState<JobSearchPhase[]>(initialData.phases);
+    const [statuses] = useState<JobSearchStatus[]>(initialData.statuses);
     const [jobListings, setJobListings] = useState<JobSearchJobListing[]>(initialData.jobListings);
-    const [isDisabled, setIsDisabled] = useState(initialData.isDisabled);
+    const [isDisabled] = useState(initialData.isDisabled);
 
     const updateJobStatus = useCallback((jobId: string, newStatus: JobSearchStatus) => {
         setJobListings(prev =>

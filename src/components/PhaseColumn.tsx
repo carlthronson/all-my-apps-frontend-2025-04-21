@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Story from './Story';
 import { useJobSearch } from '@/contexts/JobSearchContext';
-import { JobSearchPhase, JobSearchTask, Company } from '@/types/jobSearchTypes';
+import { JobSearchPhase, Company } from '@/types/jobSearchTypes';
 
 const PhaseArea = styled.div`
     background-color: #f4f5f7;
@@ -31,7 +31,7 @@ const StoryListArea = styled.div`
     min-height: 100px;
 `   ;
 
-export default function PhaseColumn({ phase, id }: { phase: JobSearchPhase; id: string }) {
+export default function PhaseColumn({ phase }: { phase: JobSearchPhase }) {
     const { jobListings } = useJobSearch();
 
     const filteredJobs = jobListings.filter(job =>
