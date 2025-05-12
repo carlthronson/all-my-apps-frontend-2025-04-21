@@ -1,3 +1,4 @@
+'use client';
 import React, { useState } from 'react';
 import 'react-calendar/dist/Calendar.css';
 import Month from './Month';
