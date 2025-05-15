@@ -3,6 +3,9 @@ import Calendar from '@/components/Calendar';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth.config";
 import { redirect } from "next/navigation";
+import { ForecastProvider } from '@/contexts/ForecastContext';
+import { fetchGraphQL } from '@/utils/fetchGraphQL';
+import { GET_FORECAST } from '@/graphql/queries';
 
 export default async function CalendarPage() {
   const session = await getServerSession(authOptions);
@@ -11,6 +14,18 @@ export default async function CalendarPage() {
     redirect("/login");
   }
 
-  return <Calendar />;
+  const forecastData = await fetchGraphQL({
+    query: GET_FORECAST, variables: {
+      startBalance: 1000,
+      cash: 100
+    }
+  });
+  const forecast = forecastData?.getForecast;
+
+  return (
+    <ForecastProvider initialData={forecast}>
+      <Calendar />;
+    </ForecastProvider>
+  );
 }
 

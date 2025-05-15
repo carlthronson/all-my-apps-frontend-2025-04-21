@@ -1,9 +1,10 @@
+// /src/app/flash-cards-data/page.jsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth.config";
 import { redirect } from "next/navigation";
-import Forecast from "@components/Forecast";
+import FlashCardForm from '@/components/FlashCardForm';
 
-export default async function ForecastPage() {
+export default async function Page() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -12,9 +13,7 @@ export default async function ForecastPage() {
 
   return (
     <div>
-      <h1>Budget</h1>
-      <h2>Forecast</h2>
-      <Forecast />
+      <FlashCardForm />
     </div>
   );
 }

@@ -36,6 +36,16 @@ export default async function Home() {
           Budget Calendar
         </Link>
       </div>
+      <div>
+      <Link href="/flash-cards">
+          Flash Cards App
+        </Link>
+      </div>
+      <div>
+      <Link href="/flash-cards-data">
+          Flash Cards Data
+        </Link>
+      </div>
       <AuthButtons></AuthButtons>
     </main>
   );

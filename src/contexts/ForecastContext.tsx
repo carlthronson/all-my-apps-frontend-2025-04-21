@@ -1,6 +1,7 @@
 // contexts/ForecastContext.tsx
 "use client";
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { GET_FORECAST } from '@/graphql/queries'; // Adjust the import path as necessary
 
 type DailyActivity = {
   date: string;
@@ -26,38 +27,18 @@ type ForecastContextType = {
 
 const ForecastContext = createContext<ForecastContextType | null>(null);
 
-const query = `
-  query getForecast($startBalance: Int!, $cash: Int!) {
-    getForecast(
-      startBalance: $startBalance
-      cash: $cash
-    ) {
-      startingBalance
-      cash
-      endingDate
-      firstNegativeBalance
-      maxDebt
-      dailyActivity {
-        date
-        startingBalance
-        transactions {
-          id
-          name
-          amount
-          dayOfMonth
-        }
-        endingBalance
-      }
-    }  
-  }
-`
-
-export function ForecastProvider({ children }: { children: React.ReactNode }) {
-  const [startingBalance, setStartingBalance] = useState(10000);
-  const [cash, setCash] = useState(100);
-  const [firstNegativeBalance, setFirstNegativeBalance] = useState("");
-  const [maxDebt, setMaxDebt] = useState(0);
-  const [dailyActivity, setDailyActivity] = useState<DailyActivity[]>([]);
+export function ForecastProvider({
+  initialData,
+  children,
+}: {
+  initialData: ForecastContextType;
+  children: React.ReactNode;
+}) {
+  const [startingBalance, setStartingBalance] = useState(initialData.startingBalance);
+  const [cash, setCash] = useState(initialData.cash);
+  const [firstNegativeBalance, setFirstNegativeBalance] = useState(initialData.firstNegativeBalance);
+  const [maxDebt, setMaxDebt] = useState(initialData.maxDebt);
+  const [dailyActivity, setDailyActivity] = useState<DailyActivity[]>(initialData.dailyActivity);
 
   const fetchForecast = useCallback(async () => {
     try {
@@ -65,14 +46,14 @@ export function ForecastProvider({ children }: { children: React.ReactNode }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: query, // Move your query here
-          variables: { startBalance: startingBalance, cash }
+          query: GET_FORECAST, // Move your query here
+          variables: { startBalance: Math.trunc(startingBalance), cash }
         })
       });
-      
+
       const json = await response.json();
       if (json?.errors) throw new Error(json.errors[0].message);
-      
+
       setFirstNegativeBalance(json.data.getForecast.firstNegativeBalance);
       setMaxDebt(json.data.getForecast.maxDebt);
       setDailyActivity(json.data.getForecast.dailyActivity);
@@ -106,4 +87,3 @@ export const useForecast = () => {
   if (!context) throw new Error("useForecast must be used within ForecastProvider");
   return context;
 };
-

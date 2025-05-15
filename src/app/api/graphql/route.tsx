@@ -28,6 +28,9 @@ export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions);
     const backendJWT = session?.user?.authToken || null;
 
+    console.log("Request body:", body);
+    console.log("Backend JWT:", backendJWT);
+
     const response = await fetch(process.env.API_URL as string, {
       method: "POST",
       headers: {

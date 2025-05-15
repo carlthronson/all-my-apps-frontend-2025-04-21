@@ -3,6 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth.config";
 
 export async function fetchGraphQL({ query, variables = {} }) {
+  debugger;
+  console.log("Fetching GraphQL data...");
+  console.log("Query:", query);
+  console.log("Variables:", variables);
   // Get the session and extract the backend JWT
   const session = await getServerSession(authOptions);
   const backendJWT = session?.user?.authToken || null;
@@ -30,6 +34,8 @@ export async function fetchGraphQL({ query, variables = {} }) {
   const json = await response.json();
   if (json.errors) {
     throw new Error(`GraphQL error: ${json.errors[0].message}`);
+  } else {
+    console.log("GraphQL response:", json.data);
   }
   return json.data;
 }

@@ -41,7 +41,7 @@ export default function Story({ phase, story, index, total }) {
       </div>
       <section {...getCollapseProps()}>
         {filteredJobs.map((item, index) => (
-          <Task key={index} job={item} story={story} index={index} />
+          <Task key={item.linkedinid} job={item} story={story} index={index} />
         ))}
       </section>
     </StoryArea>
