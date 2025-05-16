@@ -36,7 +36,7 @@ export default async function JobBoardPage() {
 {
   getJobSearchJobListings(
     pageNumber: 0
-    pageSize: 100
+    pageSize: 1000
     sortDirection: "DESC"
     sortProperties: ["publishedAt"]
   ) {
