@@ -50,7 +50,7 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
         End of runway:
         <input
           type="date"
-          value={firstNegativeBalance}
+          value={firstNegativeBalance !== null ? firstNegativeBalance : 'N/A'}
           readOnly={true}
         />
       </div>
