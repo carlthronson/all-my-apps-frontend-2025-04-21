@@ -36,49 +36,62 @@ export default async function JobBoardPage() {
 {
   getJobSearchJobListings(
     pageNumber: 0
-    pageSize: 1000
+    pageSize: 10
     sortDirection: "DESC"
     sortProperties: ["publishedAt"]
   ) {
-    id
-    name
-    label
-    companyName
-    company {
+    content {
       id
       name
       label
-      location
-    }
-    location
-    linkedinid
-    linkedinurl
-    contracttype
-    experiencelevel
-    salary
-    sector
-    worktype
-    publishedAt
-    task {
-      id
-      name
-      label
-      status {
+      companyName
+      company {
         id
         name
         label
-        phase {
+        location
+      }
+      location
+      linkedinid
+      linkedinurl
+      contracttype
+      experiencelevel
+      salary
+      sector
+      worktype
+      publishedAt
+      task {
+        id
+        name
+        label
+        status {
           id
           name
           label
-        }
-      } 
+          phase {
+            id
+            name
+            label
+          }
+        } 
+      }
     }
+    number
+    size
+    totalElements
+    totalPages
+    numberOfElements
+    first
+    last
+    hasNext
+    hasPrevious
+    empty
   }
 }
 `;
   const jobData = await fetchGraphQL({ query: GET_JOBS, variables: {} });
-  const jobs = jobData?.getJobSearchJobListings;
+  const jobsPage = jobData?.getJobSearchJobListings;
+  const jobs = jobsPage?.content || [];
   // console.log("stories: " + JSON.stringify(stories));
 
   const mode = session ? 'LIVE' : 'READONLY';
@@ -95,4 +108,3 @@ export default async function JobBoardPage() {
     </div>
   </div >
 }
-
