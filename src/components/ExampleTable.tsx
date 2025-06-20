@@ -15,10 +15,23 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  MenuItem,
   Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+
+const accountOptions = [
+  { value: 'CASH', label: 'Cash' },
+  { value: 'CREDIT', label: 'Credit' },
+  // Add more as needed
+];
+
+const transactionTypes = [
+  { value: 'payment', label: 'Payment' },
+  { value: 'deposit', label: 'Deposit' },
+  // Add more as needed
+];
 
 // Transaction type: startDate and endDate are strings in YYYY-MM-DD format
 type Transaction = {
@@ -100,6 +113,7 @@ const Example = ({
         accessorKey: 'transactionType',
         header: 'Transaction Type',
         muiEditTextFieldProps: {
+          select: true, // <-- enables dropdown
           required: true,
           error: !!validationErrors?.transactionType,
           helperText: validationErrors?.transactionType,
@@ -108,22 +122,33 @@ const Example = ({
               ...validationErrors,
               transactionType: undefined,
             }),
+          children: transactionTypes.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          )),
         },
       },
       {
-        accessorKey: 'accountName', // <-- Added
-        header: 'Account Name',     // <-- Added
-        muiEditTextFieldProps: {    // <-- Added
-          required: true,           // <-- Added
-          error: !!validationErrors?.accountName, // <-- Added
-          helperText: validationErrors?.accountName, // <-- Added
-          onFocus: () =>            // <-- Added
-            setValidationErrors({   // <-- Added
-              ...validationErrors,  // <-- Added
-              accountName: undefined, // <-- Added
-            }),                    // <-- Added
-        },                         // <-- Added
-      },                           // <-- Added
+        accessorKey: 'accountName',
+        header: 'Account Name',
+        muiEditTextFieldProps: {
+          select: true, // <-- enables dropdown
+          required: true,
+          error: !!validationErrors?.accountName,
+          helperText: validationErrors?.accountName,
+          onFocus: () =>
+            setValidationErrors({
+              ...validationErrors,
+              accountName: undefined,
+            }),
+          children: accountOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          )),
+        },
+      },
       // --- startDate column ---
       {
         accessorKey: 'startDate',
