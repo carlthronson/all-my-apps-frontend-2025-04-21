@@ -29,9 +29,11 @@ const ForecastContext = createContext<ForecastContextType | null>(null);
 
 export function ForecastProvider({
   initialData,
+  prefix,
   children,
 }: {
   initialData: ForecastContextType;
+  prefix?: string;
   children: React.ReactNode;
 }) {
   const [startingBalance, setStartingBalance] = useState(initialData.startingBalance);
@@ -47,7 +49,7 @@ export function ForecastProvider({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: GET_FORECAST, // Move your query here
-          variables: { startBalance: Math.trunc(startingBalance), cash }
+          variables: { startBalance: Math.trunc(startingBalance), cash, prefix }
         })
       });
 
@@ -60,7 +62,7 @@ export function ForecastProvider({
     } catch (error) {
       console.error("Fetch error:", error);
     }
-  }, [startingBalance, cash]);
+  }, [startingBalance, cash, prefix]);
 
   useEffect(() => {
     fetchForecast();

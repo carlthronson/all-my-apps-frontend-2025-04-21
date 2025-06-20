@@ -37,6 +37,11 @@ export default async function Home() {
         </Link>
       </div>
       <div>
+      <Link href="/axcalendar">
+          AX Calendar
+        </Link>
+      </div>
+      <div>
       <Link href="/flash-cards">
           Flash Cards App
         </Link>
