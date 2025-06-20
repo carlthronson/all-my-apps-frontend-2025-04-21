@@ -16,15 +16,15 @@ export default async function CalendarPage() {
 
   const forecastData = await fetchGraphQL({
     query: GET_FORECAST, variables: {
-      startBalance: 7000,
-      cash: 80,
-      prefix: "ax-"
+      accountName: "CREDIT",
+      startingBalance: 7000,
+      dailySpending: 80,
     }
   });
   const forecast = forecastData?.getForecast;
 
   return (
-    <ForecastProvider initialData={forecast} prefix="ax-">
+    <ForecastProvider initialData={forecast}>
       <Calendar />;
     </ForecastProvider>
   );

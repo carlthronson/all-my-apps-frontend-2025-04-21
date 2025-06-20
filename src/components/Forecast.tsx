@@ -5,18 +5,25 @@ import DailyActivity from './DailyActivity';
 
 export default function Forecast() {
   const {
+    accountName,
     startingBalance,
-    cash,
+    dailySpending,
     firstNegativeBalance,
     maxDebt,
     dailyActivity,
+    setAccountName,
     setStartingBalance,
-    setCash,
+    setDailySpending,
     // fetchForecast
   } = useForecast();
 
   return (
     <>
+      <input
+        type="string"
+        value={accountName}
+        onChange={(e) => setAccountName(e.target.value)}
+      />
       <input
         type="number"
         value={startingBalance}
@@ -24,8 +31,8 @@ export default function Forecast() {
       />
       <input
         type="number"
-        value={cash}
-        onChange={(e) => setCash(Number(e.target.value))}
+        value={dailySpending}
+        onChange={(e) => setDailySpending(Number(e.target.value))}
       />
       {/* <button onClick={fetchForecast}>Get Forecast</button> */}
       

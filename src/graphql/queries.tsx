@@ -1,12 +1,13 @@
 export const GET_FORECAST = `
-  query getForecast($startBalance: Int!, $cash: Int!, $prefix: String) {
+  query getForecast($accountName: String!, $startingBalance: Int!, $dailySpending: Int!) {
     getForecast(
-      startBalance: $startBalance
-      cash: $cash
-      prefix: $prefix
+      accountName: $accountName
+      startingBalance: $startingBalance
+      dailySpending: $dailySpending
     ) {
+      accountName
       startingBalance
-      cash
+      dailySpending
       endingDate
       firstNegativeBalance
       maxDebt
@@ -20,6 +21,7 @@ export const GET_FORECAST = `
           dayOfMonth
         }
         endingBalance
+        accountName
       }
     }  
   }

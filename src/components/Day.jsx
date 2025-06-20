@@ -7,13 +7,15 @@ import DailyActivity from './DailyActivity';
 
 export default function Day({ day, index }) {
     const {
+        accountName,
         startingBalance,
-        cash,
+        dailySpending,
         firstNegativeBalance,
         maxDebt,
         dailyActivity,
+        setAccountName,
         setStartingBalance,
-        setCash,
+        setDailySpending,
         fetchForecast
     } = useForecast();
 

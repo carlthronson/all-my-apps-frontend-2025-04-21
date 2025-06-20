@@ -14,13 +14,15 @@ type CalendarProps = {
 export default function Calendar({ initialDate = moment() }: CalendarProps) {
   const [someDay, setSomeDay] = useState<Moment>(initialDate);
   const {
+    accountName,
     startingBalance,
-    cash,
+    dailySpending,
     firstNegativeBalance,
     // maxDebt,
     // dailyActivity,
+    setAccountName,
     setStartingBalance,
-    setCash,
+    setDailySpending,
     // fetchForecast
   } = useForecast();
 
@@ -35,17 +37,23 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
   return (
     <div className='calendar'>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '75%' }}>
+        Account Name:
+        <input
+          type="string"
+          value={accountName}
+          onChange={(e) => setAccountName(e.target.value)}
+        />
         Starting Balance:
         <input
           type="number"
           value={startingBalance}
           onChange={(e) => setStartingBalance(Number(e.target.value))}
         />
-        Daily Cash Flow:
+        Daily Spending:
         <input
           type="number"
-          value={cash}
-          onChange={(e) => setCash(Number(e.target.value))}
+          value={dailySpending}
+          onChange={(e) => setDailySpending(Number(e.target.value))}
         />
         End of runway:
         <input

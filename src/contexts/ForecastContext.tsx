@@ -12,16 +12,19 @@ type DailyActivity = {
     dayOfMonth: number;
   }[];
   endingBalance: number;
+  accountName?: string;
 };
 
 type ForecastContextType = {
+  accountName: string;
   startingBalance: number;
-  cash: number;
+  dailySpending: number;
   firstNegativeBalance: string;
   maxDebt: number;
   dailyActivity: DailyActivity[];
+  setAccountName: (value: string) => void;
   setStartingBalance: (value: number) => void;
-  setCash: (value: number) => void;
+  setDailySpending: (value: number) => void;
   fetchForecast: () => Promise<void>;
 };
 
@@ -29,15 +32,14 @@ const ForecastContext = createContext<ForecastContextType | null>(null);
 
 export function ForecastProvider({
   initialData,
-  prefix,
   children,
 }: {
   initialData: ForecastContextType;
-  prefix?: string;
   children: React.ReactNode;
 }) {
+  const [accountName, setAccountName] = useState(initialData.accountName);
   const [startingBalance, setStartingBalance] = useState(initialData.startingBalance);
-  const [cash, setCash] = useState(initialData.cash);
+  const [dailySpending, setDailySpending] = useState(initialData.dailySpending);
   const [firstNegativeBalance, setFirstNegativeBalance] = useState(initialData.firstNegativeBalance);
   const [maxDebt, setMaxDebt] = useState(initialData.maxDebt);
   const [dailyActivity, setDailyActivity] = useState<DailyActivity[]>(initialData.dailyActivity);
@@ -49,7 +51,7 @@ export function ForecastProvider({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: GET_FORECAST, // Move your query here
-          variables: { startBalance: Math.trunc(startingBalance), cash, prefix }
+          variables: { accountName, startingBalance: Math.trunc(startingBalance), dailySpending }
         })
       });
 
@@ -62,7 +64,7 @@ export function ForecastProvider({
     } catch (error) {
       console.error("Fetch error:", error);
     }
-  }, [startingBalance, cash, prefix]);
+  }, [accountName, startingBalance, dailySpending]);
 
   useEffect(() => {
     fetchForecast();
@@ -70,13 +72,15 @@ export function ForecastProvider({
 
   return (
     <ForecastContext.Provider value={{
+      accountName,
       startingBalance,
-      cash,
+      dailySpending,
       firstNegativeBalance,
       maxDebt,
       dailyActivity,
+      setAccountName,
       setStartingBalance,
-      setCash,
+      setDailySpending,
       fetchForecast
     }}>
       {children}
