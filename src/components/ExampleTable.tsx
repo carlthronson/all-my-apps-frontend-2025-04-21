@@ -29,6 +29,7 @@ type Transaction = {
   transactionType: string;
   startDate?: string; // YYYY-MM-DD
   endDate?: string;   // YYYY-MM-DD
+  accountName: string; // <-- Added
 };
 
 const initialPayments: Transaction[] = [];
@@ -109,6 +110,20 @@ const Example = ({
             }),
         },
       },
+      {
+        accessorKey: 'accountName', // <-- Added
+        header: 'Account Name',     // <-- Added
+        muiEditTextFieldProps: {    // <-- Added
+          required: true,           // <-- Added
+          error: !!validationErrors?.accountName, // <-- Added
+          helperText: validationErrors?.accountName, // <-- Added
+          onFocus: () =>            // <-- Added
+            setValidationErrors({   // <-- Added
+              ...validationErrors,  // <-- Added
+              accountName: undefined, // <-- Added
+            }),                    // <-- Added
+        },                         // <-- Added
+      },                           // <-- Added
       // --- startDate column ---
       {
         accessorKey: 'startDate',
@@ -165,7 +180,8 @@ const Example = ({
           $dayOfMonth: Int!,
           $transactionType: String!,
           $startDate: Date,
-          $endDate: Date
+          $endDate: Date,
+          $accountName: String!           # <-- Added
         ) {
           createTransaction(
             name: $name,
@@ -173,11 +189,11 @@ const Example = ({
             dayOfMonth: $dayOfMonth,
             transactionType: $transactionType,
             startDate: $startDate,
-            endDate: $endDate
+            endDate: $endDate,
+            accountName: $accountName     # <-- Added
           )
         }
       `;
-
       fetch(`/api/graphql`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -190,6 +206,7 @@ const Example = ({
             transactionType: newTransaction.transactionType,
             startDate: newTransaction.startDate || null,
             endDate: newTransaction.endDate || null,
+            accountName: newTransaction.accountName, // <-- Added
           }
         })
       })
@@ -226,7 +243,8 @@ const Example = ({
           $dayOfMonth: Int!,
           $transactionType: String!,
           $startDate: Date,
-          $endDate: Date
+          $endDate: Date,
+          $accountName: String!           # <-- Added
         ) {
           updateTransaction(
             id: $id,
@@ -235,7 +253,8 @@ const Example = ({
             dayOfMonth: $dayOfMonth,
             transactionType: $transactionType,
             startDate: $startDate,
-            endDate: $endDate
+            endDate: $endDate,
+            accountName: $accountName     # <-- Added
           )
         }
       `;
@@ -252,6 +271,7 @@ const Example = ({
             transactionType: values.transactionType,
             startDate: values.startDate || null,
             endDate: values.endDate || null,
+            accountName: values.accountName, // <-- Added
           }
         })
       })
@@ -391,6 +411,7 @@ export default function ExampleTable() {
         transactionType
         startDate
         endDate
+        accountName   # <-- Added
       }
     }
   `;
@@ -438,6 +459,7 @@ function validateTransaction(user: Transaction) {
     transactionType: !validateRequired(user.transactionType)
       ? 'Transaction type is Required'
       : '',
+    accountName: !validateRequired(user.accountName) ? 'Account Name is Required' : '', // <-- Added
     // Optionally require startDate/endDate:
     // startDate: !validateRequired(user.startDate ?? '') ? 'Start date is Required' : '',
     // endDate: !validateRequired(user.endDate ?? '') ? 'End date is Required' : '',
