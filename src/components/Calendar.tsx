@@ -6,10 +6,17 @@ import Header from './Header';
 import moment, { Moment } from 'moment';
 import '../app/calendar/style.css';
 import { useForecast } from '@/contexts/ForecastContext';
+import { MenuItem, Select } from '@mui/material'; // <-- Add these imports
 
 type CalendarProps = {
   initialDate?: Moment;
 };
+
+// Define your account options
+const accountOptions = [
+  { value: 'CASH', label: 'Cash' },
+  { value: 'CREDIT', label: 'Credit' },
+];
 
 export default function Calendar({ initialDate = moment() }: CalendarProps) {
   const [someDay, setSomeDay] = useState<Moment>(initialDate);
@@ -38,11 +45,20 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
     <div className='calendar'>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '75%' }}>
         Account Name:
-        <input
-          type="string"
+        <Select
           value={accountName}
           onChange={(e) => setAccountName(e.target.value)}
-        />
+          displayEmpty
+          size="small"
+          style={{ minWidth: 120 }}
+        >
+          <MenuItem value="" disabled>Select Account</MenuItem>
+          {accountOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
         Starting Balance:
         <input
           type="number"
@@ -69,4 +85,3 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
     </div>
   );
 }
-
