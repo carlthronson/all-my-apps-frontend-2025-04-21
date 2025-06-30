@@ -17,8 +17,8 @@ export default async function CalendarPage() {
   const forecastData = await fetchGraphQL({
     query: GET_FORECAST, variables: {
       accountName: "CASH",
-      startingBalance: 7000,
-      dailySpending: 80,
+      startingBalance: 3716,
+      dailySpending: 1,
     }
   });
   const forecast = forecastData?.getForecast;
