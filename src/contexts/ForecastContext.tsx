@@ -17,14 +17,14 @@ type DailyActivity = {
 
 type ForecastContextType = {
   accountName: string;
-  startingBalance: number;
-  dailySpending: number;
+  startingBalance: Map<string, number>;
+  dailySpending: Map<string, number>;
   firstNegativeBalance: string;
   maxDebt: number;
   dailyActivity: DailyActivity[];
   setAccountName: (value: string) => void;
-  setStartingBalance: (value: number) => void;
-  setDailySpending: (value: number) => void;
+  setStartingBalance: (key: string, value: number) => void;
+  setDailySpending: (key: string, value: number) => void;
   fetchForecast: () => Promise<void>;
 };
 
@@ -38,11 +38,27 @@ export function ForecastProvider({
   children: React.ReactNode;
 }) {
   const [accountName, setAccountName] = useState(initialData.accountName);
-  const [startingBalance, setStartingBalance] = useState(initialData.startingBalance);
-  const [dailySpending, setDailySpending] = useState(initialData.dailySpending);
+  const [startingBalance, internalSetStartingBalance] = useState<Map<string, number>>(initialData.startingBalance);
+  const [dailySpending, internalSetDailySpending] = useState<Map<string, number>>(initialData.dailySpending);
   const [firstNegativeBalance, setFirstNegativeBalance] = useState(initialData.firstNegativeBalance);
   const [maxDebt, setMaxDebt] = useState(initialData.maxDebt);
   const [dailyActivity, setDailyActivity] = useState<DailyActivity[]>(initialData.dailyActivity);
+
+  const setStartingBalance = useCallback((key: string, value: number) => {
+    internalSetStartingBalance(prev => {
+      const newMap = new Map(prev);
+      newMap.set(key, value);
+      return newMap;
+    });
+  }, []);
+
+  const setDailySpending = useCallback((key: string, value: number) => {
+    internalSetDailySpending(prev => {
+      const newMap = new Map(prev);
+      newMap.set(key, value);
+      return newMap;
+    });
+  }, []);
 
   const fetchForecast = useCallback(async () => {
     try {
@@ -51,7 +67,7 @@ export function ForecastProvider({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: GET_FORECAST, // Move your query here
-          variables: { accountName, startingBalance: Math.trunc(startingBalance), dailySpending }
+          variables: { accountName, startingBalance: Math.trunc(startingBalance.get(accountName) || 0), dailySpending: dailySpending.get(accountName) || 0}
         })
       });
 

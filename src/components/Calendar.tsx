@@ -62,14 +62,14 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
         Starting Balance:
         <input
           type="number"
-          value={startingBalance}
-          onChange={(e) => setStartingBalance(Number(e.target.value))}
+          value={startingBalance.get(accountName) || 0}
+          onChange={(e) => setStartingBalance(accountName, Number(e.target.value))}
         />
         Daily Spending:
         <input
           type="number"
-          value={dailySpending}
-          onChange={(e) => setDailySpending(Number(e.target.value))}
+          value={dailySpending.get(accountName) || 0}
+          onChange={(e) => setDailySpending(accountName, Number(e.target.value))}
         />
         End of runway:
         <input

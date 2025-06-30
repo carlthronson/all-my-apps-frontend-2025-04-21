@@ -14,19 +14,49 @@ export default async function CalendarPage() {
     redirect("/login");
   }
 
-  const forecastData = await fetchGraphQL({
-    query: GET_FORECAST, variables: {
+  // Fetch data for CASH
+  const cashForecastData = await fetchGraphQL({
+    query: GET_FORECAST,
+    variables: {
       accountName: "CASH",
       startingBalance: 3716,
       dailySpending: 1,
     }
   });
-  const forecast = forecastData?.getForecast;
+  const cashForecast = cashForecastData?.getForecast;
+
+  // Fetch data for CREDIT (adjust startingBalance and dailySpending as needed)
+  const creditForecastData = await fetchGraphQL({
+    query: GET_FORECAST,
+    variables: {
+      accountName: "CREDIT",
+      startingBalance: 13737, // Example value, adjust as needed
+      dailySpending: 100,      // Example value, adjust as needed
+    }
+  });
+  const creditForecast = creditForecastData?.getForecast;
+
+  // Transform the forecast data to match the ForecastContextType
+  const initialData = {
+    ...cashForecast, // Use CASH as the default for other fields
+    accountName: "CASH", // Default to CASH as the selected account
+    startingBalance: new Map<string, number>([
+      ["CASH", cashForecast.startingBalance],
+      ["CREDIT", creditForecast.startingBalance],
+    ]),
+    dailySpending: new Map<string, number>([
+      ["CASH", cashForecast.dailySpending],
+      ["CREDIT", creditForecast.dailySpending],
+    ]),
+    // Other fields can remain as they are from cashForecast, or you can merge them if your backend supports it
+    firstNegativeBalance: cashForecast.firstNegativeBalance,
+    maxDebt: cashForecast.maxDebt,
+    dailyActivity: cashForecast.dailyActivity,
+  };
 
   return (
-    <ForecastProvider initialData={forecast}>
-      <Calendar />;
+    <ForecastProvider initialData={initialData}>
+      <Calendar />
     </ForecastProvider>
   );
 }
-
