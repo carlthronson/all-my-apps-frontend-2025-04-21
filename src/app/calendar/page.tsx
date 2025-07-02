@@ -19,7 +19,7 @@ export default async function CalendarPage() {
     query: GET_FORECAST,
     variables: {
       accountName: "CASH",
-      startingBalance: 9562,
+      startingBalance: -1,
       dailySpending: 1,
     }
   });
@@ -30,7 +30,7 @@ export default async function CalendarPage() {
     query: GET_FORECAST,
     variables: {
       accountName: "CREDIT",
-      startingBalance: 13737, // Example value, adjust as needed
+      startingBalance: -1, // Example value, adjust as needed
       dailySpending: 100,      // Example value, adjust as needed
     }
   });
