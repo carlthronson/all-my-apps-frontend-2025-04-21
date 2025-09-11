@@ -20,17 +20,19 @@ export interface JobSearchTask {
     status: JobSearchStatus;
 }
 
+export interface JobSearchVector {
+    id: string;
+    score: number; // Similarity score
+    text: string; // Original text used to create the vector
+    jobListing: JobSearchJobListing; // Reference to the associated JobListing
+}
+
 export interface JobSearchJobListing {
     id: string;
     name: string;
     label: string;
     companyName: string;
-    company: {
-        id: string;
-        name: string;
-        label: string;
-        location: string;
-    };
+    company: Company
     location: string;
     linkedinid: string;
     linkedinurl: string;
