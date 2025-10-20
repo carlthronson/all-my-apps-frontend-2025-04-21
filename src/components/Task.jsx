@@ -103,9 +103,9 @@ export default function Task({ job, story, index }) {
 
   const handleChange = (selectedOption) => {
     console.log('selected choice: ' + JSON.stringify(selectedOption));
-    // job.task.status.name = selectedOption.value;
-    // job.task['story'] = { id: story.id };
-    let payload = JSON.stringify({ id: job.task.id, status: selectedOption.value });
+    job.task.status.name = selectedOption.value;
+    job.task['story'] = { id: story.id };
+    let payload = JSON.stringify({ id: job.task.id, status: job.task.status.name });
     console.log("payload for posting to task api: " + payload);
     fetch('/api/rest/task', {
       method: "POST",
