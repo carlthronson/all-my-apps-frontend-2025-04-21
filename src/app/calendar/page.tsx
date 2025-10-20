@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 import { ForecastProvider } from '@/contexts/ForecastContext';
 import { fetchGraphQL } from '@/utils/fetchGraphQL';
 import { GET_FORECAST } from '@/graphql/queries';
-import Link from "next/link";
 
 export default async function CalendarPage() {
   const session = await getServerSession(authOptions);
@@ -57,11 +56,6 @@ export default async function CalendarPage() {
 
   return (
     <ForecastProvider initialData={initialData}>
-      <div>
-      <Link href="/">
-          Home
-        </Link>
-      </div>
       <Calendar />
     </ForecastProvider>
   );

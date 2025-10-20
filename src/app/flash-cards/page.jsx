@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import styles from '@/components/page.module.css';
 import { FlashcardArray } from 'react-quizlet-flashcard';
-import Link from 'next/link';
 
 function transformJsonKeys(obj, keyMap) {
   if (Array.isArray(obj)) {
@@ -40,16 +39,9 @@ export default function Home() {
       });
   }, []); // Empty dependency array
 
-  return <div>
-      <div>
-      <Link href="/">
-          Home
-        </Link>
-      </div>
-    <div className={styles.center}>
-      {isLoading ? 'Please wait' :
-        <FlashcardArray cards={cards} />
-      }
-    </div>;
-  </div>
+  return <div className={styles.center}>
+    {isLoading ? 'Please wait' :
+      <FlashcardArray cards={cards} />
+    }
+  </div>;
 }

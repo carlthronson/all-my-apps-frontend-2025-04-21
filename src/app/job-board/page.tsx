@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth.config";
 import { fetchGraphQL } from '@/utils/fetchGraphQL';
 import { JobSearchProvider } from '@/contexts/JobSearchContext';
-import Link from "next/link";
 
 // const Title = styled.h1`
 //     text-align: center;
@@ -42,11 +41,6 @@ export default async function JobBoardPage() {
   const mode = session ? 'LIVE' : 'READONLY';
 
   return <div>
-      <div>
-      <Link href="/">
-          Home
-        </Link>
-      </div>
     {/* <h1>After processing {tasks.length} total jobs...</h1>
     <h2>These jobs remain as possibilities.</h2> */}
     <h2>This view is in {mode} mode</h2>
