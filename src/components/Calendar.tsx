@@ -49,7 +49,7 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
     setAccountName,
     setStartingBalance,
     setDailySpending,
-    fetchForecast,
+    // fetchForecast,
   } = useForecast();
 
   const prev = () => {
