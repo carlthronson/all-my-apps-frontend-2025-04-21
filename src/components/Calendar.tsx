@@ -1,4 +1,6 @@
+// Calendar.tsx
 'use client';
+
 import React, { useState } from 'react';
 import 'react-calendar/dist/Calendar.css';
 import Month from './Month';
@@ -6,13 +8,31 @@ import Header from './Header';
 import moment, { Moment } from 'moment';
 import '../app/calendar/style.css';
 import { useForecast } from '@/contexts/ForecastContext';
-import { MenuItem, Select } from '@mui/material'; // <-- Add these imports
+import { MenuItem, Select } from '@mui/material';
+import { downloadTransactionsCsv } from '@/lib/exportTransactionsCsv';
 
 type CalendarProps = {
   initialDate?: Moment;
 };
 
-// Define your account options
+type CsvRow = {
+  date: string;
+  description: string;
+  amount: number | string;
+};
+
+type DailyActivity = {
+  date: string;
+  startingBalance: number;
+  transactions: {
+    name: string;
+    amount: number;
+    dayOfMonth: number;
+  }[];
+  endingBalance: number;
+  accountName?: string;
+};
+
 const accountOptions = [
   { value: 'CASH', label: 'Cash' },
   { value: 'CREDIT', label: 'Credit' },
@@ -25,12 +45,11 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
     startingBalance,
     dailySpending,
     firstNegativeBalance,
-    // maxDebt,
-    // dailyActivity,
+    dailyActivity,
     setAccountName,
     setStartingBalance,
     setDailySpending,
-    // fetchForecast
+    fetchForecast,
   } = useForecast();
 
   const prev = () => {
@@ -39,6 +58,18 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
 
   const next = () => {
     setSomeDay(someDay.clone().add(1, 'months'));
+  };
+
+  const handleExport = () => {
+    const rows = dailyActivity.map((day: DailyActivity): CsvRow[] =>
+      day.transactions.map((tx) => ({
+        date: day.date,
+        description: tx.name,
+        amount: tx.amount,
+      }))
+    ).flat();
+
+    downloadTransactionsCsv(rows, "forecast-transactions.csv");
   };
 
   return (
@@ -77,7 +108,15 @@ export default function Calendar({ initialDate = moment() }: CalendarProps) {
           value={firstNegativeBalance !== null ? firstNegativeBalance : 'N/A'}
           readOnly={true}
         />
+
+        <button
+          onClick={handleExport}
+          className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 ml-4"
+        >
+          Export CSV
+        </button>
       </div>
+
       <div className='calendar-container' style={{ width: '95%' }}>
         <Header someMoment={someDay} prev={prev} next={next} />
         <Month someMoment={someDay} today={moment()} />
